@@ -11,5 +11,15 @@ public class PrimitiveMinMaxValues {
         System.out.println("Long - Min Value:" + Long.MIN_VALUE + ", Max Value:" + Long.MAX_VALUE);
         System.out.println("Float - Min Value:" + Float.MIN_VALUE + ", Max Value:" + Float.MAX_VALUE);
         System.out.println("Double - Min Value:" + Double.MIN_VALUE + ", Max Value" + Double.MAX_VALUE);
+         int value1 = 10;
+         double value2 = 3.14;
+         String value3 = "Hello";
+         String output = "Value1:" + value1 + "\\nValue 2:" + value2 + "\\nValue 3:" + value3;
+
+        System.out.println(output);
+
+        String[] strArray = { "молоко", "мясо", "хлеб" };
+        System.out.println(String.join(", ", strArray));
+
     }
 }

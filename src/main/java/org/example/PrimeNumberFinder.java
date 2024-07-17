@@ -1,6 +1,5 @@
 package org.example;
 
-
 import java.util.Scanner;
 
 public class PrimeNumberFinder {
@@ -32,7 +31,6 @@ public class PrimeNumberFinder {
         int max = scanner.nextInt();
 
         displayPrimeNumbers(min, max);
-        // method call
         scanner.close();
     }
 }
