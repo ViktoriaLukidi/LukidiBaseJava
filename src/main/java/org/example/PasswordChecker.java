@@ -5,11 +5,13 @@ public class PasswordChecker {
     public static void main(String[] args) {
 
         Scanner scanneer = new Scanner(System.in);
-        String correctPassword = "myPassword";
-        System.out.println("Введите пароль: ");
+        System.out.println("Введите пароль для проверки: ");
+        String correctPassword = scanneer.nextLine();
 
         while (true) {
+            System.out.println("Введите пароль: ");
             String inputPassword = scanneer.nextLine();
+
             if (inputPassword.equals(correctPassword)) {
                 System.out.println("Пароль верный. Программа завершена.");
                 break;
