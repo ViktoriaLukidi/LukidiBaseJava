@@ -1,22 +1,19 @@
 package org.example;
 
 public enum ListMenuButton {
-    EXIT("Вход в систему"),
-    POWER_ON("Включение/Выключение"),
-    PRINT_CAPPUCCINO("Напечатать рецепт каппучино"),
+    ADD_COFFEE("Добавить кофе"),
+    ADD_MILK("Добавить молока"),
+    ADD_WATER("Добавить воды"),
     CLEAR_MACHINE("Очистка машины"),
-    ADD_WATER("Вода"),
-    ADD_COFFEE("Кофе"),
-    ADD_MILK("Молоко"),
-    PREPARE_CAPPUCCINO("Каппучино"),
+    EXIT("Выход из системы"),
+    POWER_ON("Включение/Выключение"),
+    PREPARE_CAPPUCCINO("Капучино"),
     PREPARE_ESPRESSO("Эспрессо"),
-    SHOW_LOG("Показать список"),
-    PROFILES("Профили");
+    PRINT_CAPPUCCINO("Напечатать рецепт каппучино"),
 
-    public final String text;
+    public final String, text()text;
 
     ListMenuButton(String text) {
         this.text = text;
     }
-}
-
+    }

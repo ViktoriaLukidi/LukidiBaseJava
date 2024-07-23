@@ -7,7 +7,7 @@ import static org.example.DrinkType.CAPPUCCINO;
 public class TaskCoffeeMachine {
 
     public static void main(String[] args) {
-        CoffeeMachine coffeeMachine = new CoffeeMachine(50, 30, 20);
+        CoffeeMachine coffeeMachine = new CoffeeMachine (50, 30, 20);
         ListMenuButton event = null;
         while (true) {
             coffeeMachine.getIsOn();//проверка вкл выкл
@@ -19,11 +19,10 @@ public class TaskCoffeeMachine {
                 case PRINT_CAPPUCCINO -> coffeeMachine.printDrinkType(CAPPUCCINO);
                 case CLEAR_MACHINE -> coffeeMachine.cleanMachine();
                 case ADD_WATER -> coffeeMachine.getWaterLevel();
-                case ADD_COFFEE -> coffeeMachine.addCoffee("Coffe");
+                case ADD_COFFEE -> coffeeMachine.refillCoffee("Coffe");
                 case ADD_MILK -> coffeeMachine.getMilkLevel();
                 case PREPARE_CAPPUCCINO -> coffeeMachine.prepareCappuccino();
                 case PREPARE_ESPRESSO -> coffeeMachine.prepareEspresso();
-                case PROFILES -> coffeeMachine.printMenu();
                 default -> out.println("ошибка");
             }
         }
