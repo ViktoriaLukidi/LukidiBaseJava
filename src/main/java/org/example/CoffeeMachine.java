@@ -1,78 +1,111 @@
 package org.example;
-import static org.example.CoffeeMachine.milkLevel;
-import static org.example.CoffeeMachine.waterLevel;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import static jdk.internal.org.jline.utils.Colors.s;
+import static jdk.internal.org.jline.utils.Status.getStatus;
+import static org.example.ListMenuButton.*;
+import static java.lang.System.in;
+import static java.lang.System.out;
+import static org.example.DrinkType.CAPPUCCINO;
+import static org.example.DrinkType.ESPRESSO;
 
 public class CoffeeMachine {
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-    private static final int ESPRESSO_WATER = 50;
-    private static final int ESPRESSO_MILK = 0;
+    private int waterLevel;
+    private int milkLevel;
+    private int coffeBeans;
+    private boolean isOn;
 
-    private static final int CAPPUCCINO_WATER = 30;
-    private static final int CAPPUCCINO_MILK = 20;
+    public boolean getIsOn() {
+        return isOn;
+    }
 
-    static int waterLevel;
-    static int milkLevel;
+    public void setIsOn(boolean isOn) {
+        this.isOn = isOn;
+    }
 
-    private int maxWaterLevel;
-    private int maxMilkLevel;
+    private final int maxWaterLevel = 100;
+    private final int maxMilkLevel = 50;
+    private final int maxCoffebeans = 20;
 
     private int drinksPrepared;
     private static final int CLEANING_THRESHOLD = 10;
 
-    public CoffeeMachine(int maxWaterLevel, int maxMilkLevel) {
-        this.maxWaterLevel = maxWaterLevel;
-        this.maxMilkLevel = maxMilkLevel;
-        waterLevel = maxWaterLevel;
-        milkLevel = maxMilkLevel;
+    public CoffeeMachine(int waterLevel, int milkLevel, int coffeBeans) {
+        this.waterLevel = waterLevel;
+        this.milkLevel = milkLevel;
+        this.coffeBeans = coffeBeans;
         drinksPrepared = 0;
+
+    }
+
+    public int getCoffe() {
+        return coffeBeans;
+    }
+
+    public void setCoffe(int coffe) {
+        this.coffeBeans = coffe;
     }
 
     public boolean prepareEspresso() {
-        if (waterLevel < ESPRESSO_WATER) {
-            System.out.println("Недостаточно воды для эсперессо!");
+        checkIfNeedsCleaning();
+        if (waterLevel < ESPRESSO.getWater()) {
+            out.println("Недостаточно воды для эсперессо!");
             return false;
         }
-        waterLevel -= ESPRESSO_WATER;
+        setWaterLevel(getWaterLevel() - ESPRESSO.getWater());
+        setMilkLevel(getMilkLevel() - ESPRESSO.getWater());
         drinksPrepared++;
-        checkIfNeedsCleaning();
         return true;
     }
 
     public boolean prepareCappuccino() {
-        if (waterLevel < CAPPUCCINO_WATER) {
-            System.out.println("Не достаточно воды для каппучино!");
-            return false;
-        }
-        if (milkLevel < CAPPUCCINO_MILK) {
-            System.out.println("Не достаточно молока для каппучино!");
-            return false;
-        }
-        waterLevel -= CAPPUCCINO_WATER;
-        milkLevel -= CAPPUCCINO_MILK;
-        drinksPrepared++;
         checkIfNeedsCleaning();
+        if (waterLevel < CAPPUCCINO.getWater()) {
+            out.println("Не достаточно воды для каппучино!");
+            return false;
+        }
+        if (milkLevel < CAPPUCCINO.getWater()) {
+            out.println("Не достаточно молока для каппучино!");
+            return false;
+        }
+        setWaterLevel(getWaterLevel() - CAPPUCCINO.getWater());
+        setMilkLevel(getMilkLevel() - CAPPUCCINO.getWater());
+        drinksPrepared++;
         return true;
     }
 
     public void refillWater() {
         waterLevel = maxWaterLevel;
-        System.out.println("Долив воды.");
+        out.println("Долив воды.");
     }
 
     public void refillMilk() {
         milkLevel = maxMilkLevel;
-        System.out.println("Долив молока.");
+        out.println("Долив молока.");
     }
 
-    private void checkIfNeedsCleaning() {
+    private boolean checkIfNeedsCleaning() {
         if (drinksPrepared >= CLEANING_THRESHOLD) {
-            cleanMachine();
-            drinksPrepared = 0;
+            out.println("Нужно очистить кофемашину...");
+            return false;
         }
+        if (drinksPrepared == 0) {
+            out.println("Машина чистая!");
+            return true;
+        }
+        return false;
     }
 
-    private void cleanMachine() {
-        System.out.println("Очистка кофемашины...");
+    void cleanMachine() {
+        if (!checkIfNeedsCleaning()) {
+            drinksPrepared = 0;
+            out.println("Очистка кофемашины...");
+        }
     }
 
     public int getWaterLevel() {
@@ -83,70 +116,132 @@ public class CoffeeMachine {
         return milkLevel;
     }
 
-    public static void main(String[] args) {
-        CoffeeMachine coffeeMachine = new CoffeeMachine(1000, 500);
-
-        coffeeMachine.prepareEspresso();
-        coffeeMachine.prepareCappuccino();
-        coffeeMachine.refillWater();
-        coffeeMachine.refillMilk();
-    }
-}
-
-enum DrinkType {
-    ESPRESSO,
-    CAPPUCCINO;
-
-    static class CoffeeMachineException extends Exception {
-        public CoffeeMachineException(String message) {
-            super(message);
-        }
+    public void setWaterLevel(int waterLevel) {
+        this.waterLevel = waterLevel;
     }
 
-    public void makeDrink(DrinkType type) throws CoffeeMachineException {
+    public void setMilkLevel(int milkLevel) {
+        this.milkLevel = milkLevel;
     }
 
-    public void makeCoffee(DrinkType type) throws CoffeeMachineException {
-        switch (type) {
-            case ESPRESSO:
-                checkWaterLevel(50, "Недостаточно воды для эспрессо!");
-                makeEspresso();
-                break;
-            case CAPPUCCINO:
-                checkIngredients(30, 20, "Недостаточно ингредиентов для каппучино!");
-                makeCappuccino();
-                break;
-            default:
-                throw new CoffeeMachineException("Неизвестный напиток!");
-        }
+
+    public void makeDrink(DrinkType type) {
     }
 
-    private void makeCappuccino() {
-    }
-
-    private void makeEspresso() {
-    }
-
-    private static void checkWaterLevel(int requiredWater, String errorMessage) throws CoffeeMachineException {
-        if (waterLevel < requiredWater) {
-            throw new CoffeeMachineException(errorMessage);
-        }
-    }
-
-    private static void checkIngredients(int requiredWater, int requiredMilk, String errorMessage) throws CoffeeMachineException {
+    private void checkIngredients(int requiredWater, int requiredMilk, String errorMessage) {
         if (waterLevel < requiredWater || milkLevel < requiredMilk) {
-            throw new CoffeeMachineException(errorMessage);
         }
     }
 
-    public String getRecipe(DrinkType type) {
-        switch (type) {
-            case ESPRESSO:
-                return "Эспрессо: 50мл воды";
-            case CAPPUCCINO:
-                return "Капучино: 30мл воды, 20мл молока";
-            default:
-                return "Неизвестный рецепт";
+    public ListMenuButton inputItem() {
+        ListMenuButton[] menu = values();
+        int selectItem;
+        int menuLength = 20;
+        do {
+            selectItem = insertNumber("\nВведите номер 0-" + menuLength + ": ");
+        } while (selectItem < 0 || selectItem > menuLength);
+        return menu[selectItem];
+    }
+
+    public int insertNumber(String s) {
+        int count;
+        String input = "";
+        do {
+            out.print(s);
+            try {
+                input = reader.readLine();
+                count = Integer.parseInt(input);
+                if (count >= 0) {
+                    break;
+                }
+            } catch (NumberFormatException | IOException e) {
+                switch (input) {//если не цифра а название напитка то обрабатываем через тру кетч
+                    case "Каппучино" -> printDrinkType(CAPPUCCINO);
+                    case "Эспрессо" -> printDrinkType(ESPRESSO);
+                    default -> out.print("Неверный ввод\n");
+                }
+            }
+        } while (true);
+        return count;
+    }
+
+    public void printDrinkType(DrinkType drinkType) {
+        if (getIsOn()) { // добавить булевый метод включения
+            out.printf("Рецепт" + drinkType + ": " + "вода- " + drinkType.getWater() + drinkType.getCoffee() + "\n");
+
+        } else {
+            out.print("Ошибка. Включите кофемашину\n");
+        }
+    }
+
+    public void tornOnOff() {
+        out.println("Машина выключена");
+        boolean getStatus = false;
+        if (getStatus) {
+            System.out.println("Машина выключается...");
+        } else {
+            out.println("Машина включается...");
+
+        }
+        setIsOn(!getIsOn());
+
+    }
+
+    public void printMenu() {
+        out.println("0. " + EXIT);
+        out.println("1. " + POWER_ON);
+        out.println("2. " + PRINT_CAPPUCCINO.text);
+        out.println("3. " + CLEAR_MACHINE);
+        out.println("4. " + ADD_WATER);
+        out.println("5. " + ADD_COFFEE);
+        out.println("6. " + ADD_MILK);
+        out.println("7. " + PREPARE_CAPPUCCINO);
+        out.println("8. " + PREPARE_ESPRESSO);
+        out.println("9. " + PROFILES);
+    }
+
+    public int inputNumberMenu(String s) {
+        int count;
+        String input = "";
+        do {
+            out.print(s);
+            try {
+                input = reader.readLine();
+                count = Integer.parseInt(input);
+                if (count >= 0) {
+                    break;
+                }
+            } catch (NumberFormatException | IOException e) {
+                switch (input) {
+                    case "Cappuccino" -> printDrinkType(CAPPUCCINO);
+                    case "Espresso" -> printDrinkType(ESPRESSO);
+                    default -> out.print("Invalid input\n");
+                }
+            }
+        } while (true);
+        return count;
+    }
+
+    public void addCoffee(String ingredient) {
+        int countAdded = inputNumberMenu("\nСколько добавить " + ingredient + "\n");
+        setCoffe(getCoffe() + countAdded);
+
+    }
+
+    public void printRecipe() {
+        if (false) {
+            System.out.println("Вода: " + getWaterLevel() + "мл");
+            System.out.println("Молоко: " + getMilkLevel() + "мл");
+            System.out.println(" Кофе: " + getCoffe() + "г");
+        } else {
+        }
+    }
+
+    public class Main {
+        public static void main(String[] args) {
+            DrinkType cappuccino = CAPPUCCINO;
+
+            cappuccino.printRecipe();
         }
     }
 }
